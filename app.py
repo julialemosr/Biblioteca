@@ -1,3 +1,4 @@
+import sqlalchemy
 from flask import Flask, jsonify, request, redirect, url_for, flash
 from sqlalchemy import select
 from models import Livro, Usuario, Emprestimo, db_session
@@ -121,6 +122,87 @@ def historico_emprestimo():
         lista_historico_emprestimo.append(n.serialize_historico_emprestimo())
     return jsonify({'lista_consulta_historico_emprestimo': lista_historico_emprestimo})
 
+
+@app.route('/atualizarr_usuario/<int:id>', methods=['POST'])
+def atualizar_usuario(id):
+    try:
+        usuario_editado = db_session.execute(select(Usuario).where(Usuario.id_usuario == id)).scalar()
+
+        if not usuario_editado:
+            return jsonify({
+                "erro": "Não foi possível encontrar o usuário!"
+            })
+
+        if request.method == 'POST':
+            if (not request.form['form_nome'] and not request.form['form_CPF']
+                    and not request.form['form_endereco']):
+                return jsonify({
+                    "erro": "Os campos não devem ficar em branco!"
+                })
+
+            else:
+                CPF = request.form['form_CPF'].strip()
+                if usuario_editado.CPF != CPF:
+                    cpf_existe = db_session.execute(select(Usuario).where(Usuario.CPF == CPF)).scalar()
+
+                    if cpf_existe:
+                        return jsonify({
+                            "erro": "Este CPF já existe!"
+                        })
+
+                usuario_editado.nome = request.form['form_nome']
+                usuario_editado.CPF = request.form['form_cpf'].strip()
+                usuario_editado.endereco = request.form['form_endereco']
+
+                usuario_editado.save()
+
+                return jsonify({
+                    "nome": usuario_editado.nome,
+                    "cpf": usuario_editado.cpf,
+                    "endereco": usuario_editado.endereco,
+                })
+
+    except sqlalchemy.exc.IntegrityError:
+        return jsonify({
+            "erro": "Esse CPF já foi cadastrado!"
+        })
+
+@app.route('/atualizar_livro/<int:id>', methods=['POST'])
+def atualizar_livro(id):
+    try:
+        livro_editado = db_session.execute(select(Livro).where(Livro.id_livro == id)).scalar()
+
+        if not livro_editado:
+            return jsonify({
+                "erro": "O livro não foi encontrado!"
+            })
+
+        if request.method == 'POST':
+            if (not request.form['form_titulo'] and not request.form['form_autor']
+                    and not request.form['form_ISBN'] and not request.form['form_resumo']):
+                return jsonify({
+                    "erro": "Os campos não devem ficar em branco!"
+                })
+
+            else:
+                livro_editado.titulo = request.form['form_titulo']
+                livro_editado.autor = request.form['form_autor']
+                livro_editado.ISBN = request.form['form_ISBN']
+                livro_editado.resumo = request.form['form_resumo']
+
+                livro_editado.save()
+
+                return jsonify({
+                    "titulo": livro_editado.titulo,
+                    "autor": livro_editado.autor,
+                    "ISBN": livro_editado.ISBN,
+                    "resumo": livro_editado.resumo
+                })
+
+    except sqlalchemy.exc.IntegrityError:
+        return jsonify({
+            "erro": "O titulo já foi cadastrado!"
+        })
 
 
 if __name__ == '__main__':
