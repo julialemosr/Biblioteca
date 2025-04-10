@@ -103,19 +103,24 @@ def realizacao_emprestimo():
             'erro':'cadastro de usuário inválida!'
         })
 
-@app.route('/consulta_livros', methods=['GET'])
-def consulta_livros():
-    try:
+@app.route('/livros_disponiveis_emprestados', methods=['GET'])
+def consultas():
+    sql_consultas = select(consultas)
+    resultado_consultas = db_session.execute(sql_consultas).scalars()
+    lista_consultas = []
+    for n in resultado_consultas:
+        lista_consultas.append(n.serialize_consultas())
+    return jsonify({'lista_livros_disponiveis_emprestados': lista_consultas})
 
+@app.route('/consulta_historico_emprestimo', methods=['GET'])
+def historico_emprestimo():
+    sql_historico_emprestimo = select(historico_emprestimo)
+    resultado_historico_emprestimo = db_session.execute(sql_historico_emprestimo).scalars()
+    lista_historico_emprestimo = []
+    for n in resultado_historico_emprestimo:
+        lista_historico_emprestimo.append(n.serialize_historico_emprestimo())
+    return jsonify({'lista_consulta_historico_emprestimo': lista_historico_emprestimo})
 
-        return jsonify({
-
-        })
-
-    except ValueError:
-        return jsonify({
-            'erro':'cadastro de usuário inválida!'
-        })
 
 
 if __name__ == '__main__':
