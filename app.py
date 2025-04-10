@@ -31,8 +31,7 @@ def emprestimos():
     lista_emprestimos = []
     for n in resultado_emprestimos:
         lista_emprestimos.append(n.serialize_emprestimo())
-    return jsonify({'lista_emprestimos'
-                    '': lista_emprestimos})
+    return jsonify({'lista_emprestimos' : lista_emprestimos})
 
 @app.route('/novo_livro', methods=['POST'])
 def criar_livros():
@@ -82,8 +81,8 @@ def criar_usuarios():
             'erro':'cadastro de usuário inválida!'
         })
 
-@app.route('/realizacao_emprestimo', methods=['POST'])
-def realizacao_emprestimo():
+@app.route('/realizar_emprestimo', methods=['POST'])
+def realizar_emprestimo():
     try:
         form_cadastro_emprestimo = Emprestimo(
             id_usuario = int(request.form['id_usuario']),
@@ -123,7 +122,7 @@ def historico_emprestimo():
     return jsonify({'lista_consulta_historico_emprestimo': lista_historico_emprestimo})
 
 
-@app.route('/atualizarr_usuario/<int:id>', methods=['POST'])
+@app.route('/atualizar_usuario/<id>', methods=['PUT'])
 def atualizar_usuario(id):
     try:
         usuario_editado = db_session.execute(select(Usuario).where(Usuario.id_usuario == id)).scalar()
@@ -133,7 +132,7 @@ def atualizar_usuario(id):
                 "erro": "Não foi possível encontrar o usuário!"
             })
 
-        if request.method == 'POST':
+        if request.method == 'PUT':
             if (not request.form['form_nome'] and not request.form['form_CPF']
                     and not request.form['form_endereco']):
                 return jsonify({
@@ -143,22 +142,22 @@ def atualizar_usuario(id):
             else:
                 CPF = request.form['form_CPF'].strip()
                 if usuario_editado.CPF != CPF:
-                    cpf_existe = db_session.execute(select(Usuario).where(Usuario.CPF == CPF)).scalar()
+                    CPF_existe = db_session.execute(select(Usuario).where(Usuario.CPF == CPF)).scalar()
 
-                    if cpf_existe:
+                    if CPF_existe:
                         return jsonify({
                             "erro": "Este CPF já existe!"
                         })
 
                 usuario_editado.nome = request.form['form_nome']
-                usuario_editado.CPF = request.form['form_cpf'].strip()
+                usuario_editado.CPF = request.form['form_CPF'].strip()
                 usuario_editado.endereco = request.form['form_endereco']
 
                 usuario_editado.save()
 
                 return jsonify({
                     "nome": usuario_editado.nome,
-                    "cpf": usuario_editado.cpf,
+                    "CPF": usuario_editado.CPF,
                     "endereco": usuario_editado.endereco,
                 })
 
@@ -167,7 +166,7 @@ def atualizar_usuario(id):
             "erro": "Esse CPF já foi cadastrado!"
         })
 
-@app.route('/atualizar_livro/<int:id>', methods=['POST'])
+@app.route('/atualizar_livro/<id>', methods=['PUT'])
 def atualizar_livro(id):
     try:
         livro_editado = db_session.execute(select(Livro).where(Livro.id_livro == id)).scalar()
@@ -177,7 +176,7 @@ def atualizar_livro(id):
                 "erro": "O livro não foi encontrado!"
             })
 
-        if request.method == 'POST':
+        if request.method == 'PUT':
             if (not request.form['form_titulo'] and not request.form['form_autor']
                     and not request.form['form_ISBN'] and not request.form['form_resumo']):
                 return jsonify({
