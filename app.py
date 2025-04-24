@@ -103,15 +103,6 @@ def realizar_emprestimo():
             'erro':'cadastro de usuário inválida!'
         })
 
-@app.route('/livros_disponiveis_emprestados', methods=['GET'])
-def consultas():
-    sql_consultas = select(Livro)
-    resultado_consultas = db_session.execute(sql_consultas).scalars()
-    lista_consultas = []
-    for n in resultado_consultas:
-        lista_consultas.append(n.serialize_livro())
-    return jsonify({'lista_livros_disponiveis_emprestados': lista_consultas})
-
 @app.route('/consulta_historico_emprestimo', methods=['GET'])
 def historico_emprestimo():
     sql_historico_emprestimo = select(Emprestimo)
@@ -119,7 +110,7 @@ def historico_emprestimo():
     lista_historico_emprestimo = []
     for n in resultado_historico_emprestimo:
         lista_historico_emprestimo.append(n.serialize_emprestimo())
-    return jsonify({'lista_consulta_historico_emprestimo': lista_historico_emprestimo})
+    return jsonify({'historico_de_emprestimo': lista_historico_emprestimo})
 
 
 @app.route('/atualizar_usuario/<id>', methods=['PUT'])
@@ -201,6 +192,42 @@ def atualizar_livro(id):
     except sqlalchemy.exc.IntegrityError:
         return jsonify({
             "erro": "O titulo já foi cadastrado!"
+        })
+
+@app.route('/livro_status', methods=['GET'])
+def livro_status():
+    try:
+        livro_emprestado = db_session.execute(
+            select(Livro).where(Livro.id_livro == Emprestimo.id_emprestimo).distinct(Livro.ISBN)).scalars()
+        id_livro_emprestado = db_session.execute(
+            select(Livro.id_livro).where(Livro.id_livro == Emprestimo.id_emprestimo).distinct(Livro.ISBN)).scalars()
+        print("livro Emprestados",livro_emprestado)
+        livrostatus = db_session.execute(select(Livro)).scalars()
+
+        print("Todos os livros", livrostatus)
+
+        lista_emprestados = []
+        lista_disponiveis = []
+        for livro in livro_emprestado:
+            lista_emprestados.append(livro.serialize_user())
+
+        for book in livrostatus:
+            if book.id_livro not in id_livro_emprestado:
+                lista_disponiveis.append(book.serialize_livro())
+
+        print("Resultados da lista:", lista_emprestados)
+        print("Resultados disponiveis", lista_disponiveis)
+
+
+        return jsonify({
+            "Livros emprestados": lista_emprestados,
+            "Livros disponiveis": lista_disponiveis
+
+        })
+
+    except ValueError:
+        return jsonify({
+            "error": "Dados indisponíveis"
         })
 
 
