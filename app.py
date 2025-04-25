@@ -1,5 +1,5 @@
 import sqlalchemy
-from flask import Flask, jsonify, request, redirect, url_for, flash
+from flask import Flask, jsonify, request
 from sqlalchemy import select
 from models import Livro, Usuario, Emprestimo, db_session
 
@@ -198,10 +198,15 @@ def atualizar_livro(id):
 def livro_status():
     try:
         livro_emprestado = db_session.execute(
-            select(Livro).where(Livro.id_livro == Emprestimo.id_emprestimo).distinct(Livro.ISBN)).scalars()
+            select(Livro).where(Livro.id_livro == Emprestimo.id_livro).distinct(Livro.ISBN)
+        ).scalars()
+
         id_livro_emprestado = db_session.execute(
-            select(Livro.id_livro).where(Livro.id_livro == Emprestimo.id_emprestimo).distinct(Livro.ISBN)).scalars()
+            select(Emprestimo.id_livro).distinct(Emprestimo.id_livro)
+        ).scalars().all()
+
         print("livro Emprestados",livro_emprestado)
+        print("ids_livro_emprestado",id_livro_emprestado)
         livrostatus = db_session.execute(select(Livro)).scalars()
 
         print("Todos os livros", livrostatus)
@@ -209,13 +214,14 @@ def livro_status():
         lista_emprestados = []
         lista_disponiveis = []
         for livro in livro_emprestado:
-            lista_emprestados.append(livro.serialize_user())
-
-        for book in livrostatus:
-            if book.id_livro not in id_livro_emprestado:
-                lista_disponiveis.append(book.serialize_livro())
+            lista_emprestados.append(livro.serialize_livro())
 
         print("Resultados da lista:", lista_emprestados)
+
+        for livro in livrostatus:
+            if livro.id_livro not in id_livro_emprestado:
+                lista_disponiveis.append(livro.serialize_livro())
+
         print("Resultados disponiveis", lista_disponiveis)
 
 
