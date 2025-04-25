@@ -108,8 +108,13 @@ def criar_livros():
         Bad Request***:
             ```json
        """
-
+    dados = request.get_json()
+    print(dados)
     try:
+        if not  "titulo" or not "autor" or not "ISBN" in dados:
+            return jsonify({'erro': "Campos obrigatórios"})
+        if dados["titulo"] or ["autor"] or ["ISBN"] or ["resumo"] == "":
+            return jsonify({'erro': "O campo não pode estar vazio"})
         form_cadastro_livro = Livro(
             titulo=str (request.form['form-titulo']),
             autor=str(request.form['form-autor']),
@@ -154,7 +159,13 @@ def criar_usuarios():
              Bad Request***:
                  ```json
             """
+    dados = request.get_json()
+    print(dados)
     try:
+        if not  "nome" or not "cpf" in dados:
+            return jsonify({'erro': "Campos obrigatórios"})
+        if dados["nomes"] or ["cpf"] or ["endereco"] == "":
+            return jsonify({'erro': "O campo não pode estar vazio"})
         form_cadastro_usuario = Usuario(
             nome=str(request.form['form-nome']),
             CPF=str(request.form['form-CPF']),
@@ -198,7 +209,14 @@ def realizar_emprestimo():
                Bad Request***:
                    ```json
               """
+    dados = request.get_json()
+    print(dados)
     try:
+        if not  "data_emprestimo" or not "data_devolucao" in dados:
+            return jsonify({'erro': "Campos obrigatórios"})
+        if dados["data_emprestimo"] or ["data_devolucao"] == "":
+            return jsonify({'erro': "O campo não pode estar vazio"})
+
         form_cadastro_emprestimo = Emprestimo(
             id_usuario = int(request.form['id_usuario']),
             id_livro = int(request.form['id_livro']),
@@ -271,7 +289,13 @@ def atualizar_usuario(id):
                Bad Request***:
                    ```json
               """
+    dados = request.get_json()
+    print(dados)
     try:
+        if not  "nome" or not "cpf" in dados:
+            return jsonify({'erro': "Campos obrigatórios"})
+        if dados["nomes"] or ["cpf"] or ["endereco"] == "":
+            return jsonify({'erro': "O campo não pode estar vazio"})
         usuario_editado = db_session.execute(select(Usuario).where(Usuario.id_usuario == id)).scalar()
 
         if not usuario_editado:
@@ -338,7 +362,13 @@ def atualizar_livro(id):
                 Bad Request***:
                     ```json
                """
+    dados = request.get_json()
+    print(dados)
     try:
+        if not  "titulo" or not "autor" or not "ISBN" in dados:
+            return jsonify({'erro': "Campos obrigatórios"})
+        if dados["titulo"] or ["autor"] or ["ISBN"] or ["resumo"] == "":
+            return jsonify({'erro': "O campo não pode estar vazio"})
         livro_editado = db_session.execute(select(Livro).where(Livro.id_livro == id)).scalar()
 
         if not livro_editado:
