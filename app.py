@@ -8,6 +8,23 @@ app.config['SECRET_KEY'] = 'secret'
 
 @app.route('/livros', methods=['GET'])
 def livros():
+    """
+        Lista de Livros
+           ## Endpoint:
+            /livros
+
+           ## Respostas (JSON):
+           ```json
+
+        {
+            "livros": lista_livros"
+        }
+        ## Erros possíveis (JSON):
+        "A lista está indisponível"
+        Bad Request***:
+            ```json
+    """
+
     sql_livros = select(Livro)
     resultado_livros = db_session.execute(sql_livros).scalars()
     lista_livros = []
@@ -17,6 +34,23 @@ def livros():
 
 @app.route('/usuarios', methods=['GET'])
 def usuarios():
+    """
+       Lista de usuários.
+       ## Endpoint:
+        /usuarios
+
+       ## Respostas (JSON):
+       ```json
+
+       {
+            "usuarios": lista_usuarios
+       }
+        ## Erros possíveis (JSON):
+        "A lista está indisponível"
+        Bad Request***:
+            ```json
+    """
+
     sql_usuarios = select(Usuario)
     resultado_usuarios = db_session.execute(sql_usuarios).scalars()
     lista_usuarios = []
@@ -26,6 +60,24 @@ def usuarios():
 
 @app.route('/emprestimos', methods=['GET'])
 def emprestimos():
+    """
+       listar emprestimo por usuário.
+
+       ## Endpoint:
+        /emprestimos
+
+       ## Respostas (JSON):
+       ```json
+
+       {
+            "emprestimos": lista_emprestimos
+       }
+
+        ## Erros possíveis (JSON):
+        "NOs dados desse empréstimo não estão disponíveis ***400
+        Bad Request***:
+            ```json
+    """
     sql_emprestimos = select(Emprestimo)
     resultado_emprestimos = db_session.execute(sql_emprestimos).scalars()
     lista_emprestimos = []
@@ -35,6 +87,28 @@ def emprestimos():
 
 @app.route('/novo_livro', methods=['POST'])
 def criar_livros():
+    """
+       Cadastro de livro.
+
+       ## Endpoint:
+        /novo_livro
+
+       ## Respostas (JSON):
+       ```json
+
+       {
+            "titulo":
+            "autor",
+            "ISBN":,
+            "resumo",
+        }
+
+       ## Erros possíveis (JSON):
+        "O livro já está cadastrado"
+        Bad Request***:
+            ```json
+       """
+
     try:
         form_cadastro_livro = Livro(
             titulo=str (request.form['form-titulo']),
@@ -60,6 +134,26 @@ def criar_livros():
 
 @app.route('/novo_usuario', methods=['POST'])
 def criar_usuarios():
+    """
+            Cadastro de usuário
+
+            ## Endpoint:
+             /novo_usuario
+
+            ## Respostas (JSON):
+            ```json
+
+            {
+                 "nome",
+                 "cpf":,
+                 "endereco",
+             }
+
+            ## Erros possíveis (JSON):
+             "O usuário já está cadastrado"
+             Bad Request***:
+                 ```json
+            """
     try:
         form_cadastro_usuario = Usuario(
             nome=str(request.form['form-nome']),
@@ -83,6 +177,27 @@ def criar_usuarios():
 
 @app.route('/realizar_emprestimo', methods=['POST'])
 def realizar_emprestimo():
+    """
+              Realiza emprestimo.
+
+              ## Endpoint:
+               /realizar_emprestimo
+
+              ## Respostas (JSON):
+              ```json
+
+              {
+                   "id_usuario":,
+                   "id_livro",
+                   "data_emprestimo",
+                   "data_emprestimo",
+               }
+
+              ## Erros possíveis (JSON):
+               "O empréstimo já foi cadastrado"
+               Bad Request***:
+                   ```json
+              """
     try:
         form_cadastro_emprestimo = Emprestimo(
             id_usuario = int(request.form['id_usuario']),
@@ -105,6 +220,24 @@ def realizar_emprestimo():
 
 @app.route('/consulta_historico_emprestimo', methods=['GET'])
 def historico_emprestimo():
+    """
+       Consulta historico de emprestimo
+
+       ## Endpoint:
+        /consulta_historico_emprestimo
+
+       ## Respostas (JSON):
+       ```json
+
+       {
+            "historico": historico_de_emprestimo
+       }
+
+        ## Erros possíveis (JSON):
+        "O histórico não está disponível
+        Bad Request***:
+            ```json
+    """
     sql_historico_emprestimo = select(Emprestimo)
     resultado_historico_emprestimo = db_session.execute(sql_historico_emprestimo).scalars()
     lista_historico_emprestimo = []
@@ -115,6 +248,29 @@ def historico_emprestimo():
 
 @app.route('/atualizar_usuario/<id>', methods=['PUT'])
 def atualizar_usuario(id):
+    """
+              API para atualizar dados do usuario.
+
+              ## Endpoint:
+               /atualizar_usuario/<int:id>
+
+               ##Parâmetros:
+               "id" **Id do usuario**
+
+              ## Respostas (JSON):
+              ```json
+
+              {
+                   "nome":
+                   "cpf",
+                   "endereco":,
+               }
+
+              ## Erros possíveis (JSON):
+               "O CPF deste usuário já está cadastrado"
+               Bad Request***:
+                   ```json
+              """
     try:
         usuario_editado = db_session.execute(select(Usuario).where(Usuario.id_usuario == id)).scalar()
 
@@ -159,6 +315,29 @@ def atualizar_usuario(id):
 
 @app.route('/atualizar_livro/<id>', methods=['PUT'])
 def atualizar_livro(id):
+    """
+               Atualizar livro.
+               ## Endpoint:
+                /atualizar_livro/<int:id>
+
+                ## Parâmetro:
+                "id" **Id do livro**
+
+               ## Respostas (JSON):
+               ```json
+
+               {
+                    "titulo":
+                    "autor",
+                    "ISBN":,
+                    "resumo",
+                }
+
+               ## Erros possíveis (JSON):
+                "O titulo do livro já está cadastrado"
+                Bad Request***:
+                    ```json
+               """
     try:
         livro_editado = db_session.execute(select(Livro).where(Livro.id_livro == id)).scalar()
 
@@ -196,6 +375,23 @@ def atualizar_livro(id):
 
 @app.route('/livro_status', methods=['GET'])
 def livro_status():
+    """
+              status de livro.
+
+               ## Endpoint:
+                /livro_status
+               ## Respostas (JSON):
+               ```json
+               {
+                    "livros emprestados":
+                    "livros disponiveis",
+                }
+
+                ## Erros possíveis (JSON):
+                "Os dados do status está indisponível"
+                Bad Request***:
+                    ```json
+                """
     try:
         livro_emprestado = db_session.execute(
             select(Livro).where(Livro.id_livro == Emprestimo.id_livro).distinct(Livro.ISBN)
