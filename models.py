@@ -1,6 +1,28 @@
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Float
 from sqlalchemy.orm import scoped_session, sessionmaker, relationship, declarative_base
-engine = create_engine('sqlite:///base_biblioteca.sqlite3')
+# engine = create_engine('sqlite:///base_biblioteca.sqlite3')
+
+from dotenv import load_dotenv
+import os  # criar variavel de ambiente '.env'
+import configparser  # criar arquivo de configuração 'config.ini'
+
+# configurar banco vercel
+# ler variavel de ambiente
+load_dotenv()
+# Carregue as configurações do banco de dados
+url_ = os.environ.get("DATABASE_URL")
+print(f"modo1:{url_}")
+
+# Carregue o arquivo de configuração
+config = configparser.ConfigParser()
+config.read('config.ini')
+# Obtenha as configurações do banco de dados
+database_url = config['database']['url']
+print(f"mode2:{database_url}")
+
+#Configuração da base de dados SQLite Online e local
+engine = create_engine(database_url) # conectar Vercel
+#engine = create_engine('sqlite:///banco.sqlite3') # conectar local alterado/substituído
 
 db_session = scoped_session(sessionmaker(bind=engine))
 
