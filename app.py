@@ -33,6 +33,7 @@ def livros():
     return jsonify({'lista_livros': lista_livros})
 
 @app.route('/usuarios', methods=['GET'])
+#proteção
 def usuarios():
     """
        Lista de usuários.
@@ -86,6 +87,7 @@ def emprestimos():
     return jsonify({'lista_emprestimos' : lista_emprestimos})
 
 @app.route('/novo_livro', methods=['POST'])
+#proteção
 def criar_livros():
     """
        Cadastro de livro.
@@ -237,6 +239,7 @@ def realizar_emprestimo():
         })
 
 @app.route('/consulta_historico_emprestimo', methods=['GET'])
+#protecao
 def historico_emprestimo():
     """
        Consulta historico de emprestimo
@@ -265,6 +268,7 @@ def historico_emprestimo():
 
 
 @app.route('/atualizar_usuario/<id>', methods=['PUT'])
+#proteção
 def atualizar_usuario(id):
     """
               API para atualizar dados do usuario.
@@ -338,6 +342,7 @@ def atualizar_usuario(id):
         })
 
 @app.route('/atualizar_livro/<id>', methods=['PUT'])
+#proteção
 def atualizar_livro(id):
     """
                Atualizar livro.
@@ -464,4 +469,4 @@ def livro_status():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)

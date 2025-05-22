@@ -21,8 +21,8 @@ database_url = config['database']['url']
 print(f"mode2:{database_url}")
 
 #Configuração da base de dados SQLite Online e local
-engine = create_engine(database_url) # conectar Vercel
-#engine = create_engine('sqlite:///banco.sqlite3') # conectar local alterado/substituído
+#engine = create_engine(database_url) # conectar Vercel
+engine = create_engine('sqlite:///banco.sqlite3') # conectar local alterado/substituído
 
 db_session = scoped_session(sessionmaker(bind=engine))
 
