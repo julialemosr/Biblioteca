@@ -22,12 +22,12 @@ print(f"mode2:{database_url}")
 
 #Configuração da base de dados SQLite Online e local
 #engine = create_engine(database_url) # conectar Vercel
-engine = create_engine('sqlite:///banco.sqlite3') # conectar local alterado/substituído
+engine = create_engine('sqlite:///base_biblioteca.sqlite3') # conectar local alterado/substituído
 
 db_session = scoped_session(sessionmaker(bind=engine))
 
 Base = declarative_base()
-Base.query = db_session.query_property()
+# Base.query = db_session.query_property()
 
 class Livro(Base):
     __tablename__ = 'LIVROS'
@@ -50,7 +50,7 @@ class Livro(Base):
 
     def serialize_livro(self):
         dados_livro = {
-            "Título": self.titulo,
+            "Titulo": self.titulo,
             "Autor": self.autor,
             "ISBN": self.ISBN,
             "Resumo": self.resumo
@@ -81,13 +81,13 @@ class Usuario(Base):
         dados_usuario = {
             "Nome": self.nome,
             "CPF": self.CPF,
-            "Endereço": self.endereco
+            "Endereco": self.endereco
         }
         return dados_usuario
 
 
 class Emprestimo(Base):
-    __tablename__ = 'EMPRÉSTIMOS'
+    __tablename__ = 'EMPRESTIMOS'
     id_emprestimo = Column(Integer, primary_key=True)
     data_emprestimo = Column(String(8), nullable=False, index=True)
     data_devolucao = Column(String(8), nullable=False, index=True)
@@ -113,12 +113,12 @@ class Emprestimo(Base):
 
     def serialize_emprestimo(self):
         dados_emprestimo = {
-            "Data de empréstimo": self.data_emprestimo,
-            "Data de devolução": self.data_devolucao,
-            "Livro emprestado": self.livro_emprestado,
-            "Usúario emprestado": self.usuario_emprestado,
-            'Usúario': self.id_usuario,
-            'Livro': self.id_livro,
+            "Data_emprestimo": self.data_emprestimo,
+            "Data_devolucao": self.data_devolucao,
+            "Livro_emprestado": self.livro_emprestado,
+            "Usuario_emprestado": self.usuario_emprestado,
+            'id_usuario': self.id_usuario,
+            'id_livro': self.id_livro,
         }
         return dados_emprestimo
 
