@@ -170,9 +170,9 @@ def criar_usuarios():
     print(dados)
     try:
         if not  "nome" or not "CPF" in dados:
-            return jsonify({'erro': "Campos obrigatórios"})
+            return jsonify({'erro': "Campos obrigatórios"}),400
         if dados["nome"] =="" or ["CPF"] =="" or ["endereco"] == "":
-            return jsonify({'erro': "O campo não pode estar vazio"})
+            return jsonify({'erro': "O campo não pode estar vazio"}),400
         cadastro_usuario = Usuario(
             nome=str(dados['nome']),
             CPF=str(dados['CPF']),
@@ -191,7 +191,7 @@ def criar_usuarios():
     except ValueError:
         return jsonify({
             'erro':'cadastro de usuário inválida!'
-        })
+        }),400
 
 @app.route('/realizar_emprestimo', methods=['POST'])
 def realizar_emprestimo():
@@ -228,14 +228,14 @@ def realizar_emprestimo():
             id_usuario = int(dados['id_usuario']),
             id_livro = int(dados['id_livro']),
             data_emprestimo = dados['data_emprestimo'],
-            data_devolucao = dados['data_devolucao']
+            data_devolucao = dados['data_devolucao'],
         )
         return jsonify({
             'Mensagem': 'Empréstimo realizado com sucesso',
-            'id_usuario': cadastro_emprestimo.id_usuario,
-            'id_livro': cadastro_emprestimo.id_livro,
-            'data_emprestimo': cadastro_emprestimo.data_emprestimo,
-            'data_devolucao': cadastro_emprestimo.data_devolucao,
+            "id_usuario": cadastro_emprestimo.id_usuario,
+            "id_livro": cadastro_emprestimo.id_livro,
+            "data_emprestimo": cadastro_emprestimo.data_emprestimo,
+            "data_devolucao": cadastro_emprestimo.data_devolucao,
         }),201
 
     except ValueError:
