@@ -133,10 +133,10 @@ def criar_livros():
 
         return jsonify({
             'Mensagem': 'Livro adicionado com sucesso',
-            'Titulo': cadastro_livro.titulo,
-            'Autor': cadastro_livro.autor,
+            'titulo': cadastro_livro.titulo,
+            'autor': cadastro_livro.autor,
             'ISBN': cadastro_livro.ISBN,
-            'Resumo': cadastro_livro.resumo
+            'resumo': cadastro_livro.resumo
         }),201
 
     except ValueError:
@@ -303,24 +303,24 @@ def atualizar_usuario(id):
     dados = request.get_json()
     print(dados)
     try:
-        if not  "nome" or not "CPF" in dados:
+        if not  "Nome" or not "CPF" in dados:
             return jsonify({'erro': "Campos obrigatórios"})
-        if dados["nome"] == "" or ["CPF"] == "" or ["endereco"] == "":
-            return jsonify({'erro': "O campo não pode estar vazio"})
+        if dados["Nome"] == "" or ["CPF"] == "" or ["Endereco"] == "":
+            return jsonify({'erro': "O campo não pode estar vazio"}),400
 
         usuario_editado = db_session.execute(select(Usuario).where(Usuario.id_usuario == id)).scalar()
 
         if not usuario_editado:
             return jsonify({
                 "erro": "Não foi possível encontrar o usuário!"
-            })
+            }),400
 
         # if request.method == 'PUT':
-        if (not dados ['nome'] and not dados ['CPF']
-                and not dados ['endereco']):
+        if (not dados ['Nome'] and not dados ['CPF']
+                and not dados ['Endereco']):
             return jsonify({
                 "erro": "Os campos não devem ficar em branco!"
-            })
+            }),400
 
         else:
             CPF = dados ['CPF'].strip()
@@ -330,24 +330,24 @@ def atualizar_usuario(id):
                 if CPF_existe:
                     return jsonify({
                         "erro": "Este CPF já existe!"
-                    })
+                    }),400
 
-            usuario_editado.nome = dados ['nome']
+            usuario_editado.nome = dados ['Nome']
             usuario_editado.CPF = dados ['CPF'].strip()
-            usuario_editado.endereco = dados ['endereco']
+            usuario_editado.endereco = dados ['Endereco']
 
             usuario_editado.save()
 
             return jsonify({
-                "nome": usuario_editado.nome,
+                "Nome": usuario_editado.nome,
                 "CPF": usuario_editado.CPF,
-                "endereco": usuario_editado.endereco,
-            })
+                "Endereco": usuario_editado.endereco,
+            }),200
 
     except sqlalchemy.exc.IntegrityError:
         return jsonify({
             "erro": "Esse CPF já foi cadastrado!"
-        })
+        }),400
 
 @app.route('/atualizar_livro/<id>', methods=['PUT'])
 #proteção
@@ -378,43 +378,43 @@ def atualizar_livro(id):
     dados = request.get_json()
     print(dados)
     try:
-        if not  "titulo" or not "autor" or not "ISBN" in dados:
-            return jsonify({'erro': "Campos obrigatórios"})
-        if dados["titulo"] == "" or ["autor"] == "" or ["ISBN"] == "" or ["resumo"] == "":
-            return jsonify({'erro': "O campo não pode estar vazio"})
+        if not  "Titulo" or not "Autor" or not "ISBN" in dados:
+            return jsonify({'erro': "Campos obrigatórios"}),400
+        if dados["Titulo"] == "" or ["Autor"] == "" or ["ISBN"] == "" or ["Resumo"] == "":
+            return jsonify({'erro': "O campo não pode estar vazio"}),400
         livro_editado = db_session.execute(select(Livro).where(Livro.id_livro == id)).scalar()
 
         if not livro_editado:
             return jsonify({
                 "erro": "O livro não foi encontrado!"
-            })
+            }),400
 
         if request.method == 'PUT':
-            if (not dados ['titulo'] and not dados['autor']
-                    and not dados ['ISBN'] and not dados ['resumo']):
+            if (not dados ['Titulo'] and not dados['Autor']
+                    and not dados ['ISBN'] and not dados ['Resumo']):
                 return jsonify({
                     "erro": "Os campos não devem ficar em branco!"
-                })
+                }),400
 
             else:
-                livro_editado.titulo = dados ['titulo']
-                livro_editado.autor = dados ['autor']
+                livro_editado.titulo = dados ['Titulo']
+                livro_editado.autor = dados ['Autor']
                 livro_editado.ISBN = dados ['ISBN']
-                livro_editado.resumo = dados ['resumo']
+                livro_editado.resumo = dados ['Resumo']
 
                 livro_editado.save()
 
                 return jsonify({
-                    "titulo": livro_editado.titulo,
-                    "autor": livro_editado.autor,
+                    "Titulo": livro_editado.titulo,
+                    "Autor": livro_editado.autor,
                     "ISBN": livro_editado.ISBN,
-                    "resumo": livro_editado.resumo
-                })
+                    "Resumo": livro_editado.resumo
+                }),200
 
     except sqlalchemy.exc.IntegrityError:
         return jsonify({
             "erro": "O titulo já foi cadastrado!"
-        })
+        }),400
 
 @app.route('/atualizar_emprestimo/<int:id>', methods=['POST'])
 def atualizar_emprestimo(id):
