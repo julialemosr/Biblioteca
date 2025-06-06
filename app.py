@@ -216,13 +216,14 @@ def realizar_emprestimo():
                Bad Request***:
                    ```json
               """
-    dados = request.get_json()
-    print(dados)
+
     try:
-        if not  "data_emprestimo" or not "data_devolucao" in dados:
-            return jsonify({'erro': "Campos obrigatórios"})
-        if dados["data_emprestimo"] =="" or ["data_devolucao"] == "":
-            return jsonify({'erro': "O campo não pode estar vazio"})
+        dados = request.get_json()
+        print(dados)
+        # if not  "data_emprestimo" or not "data_devolucao" in dados:
+        #     return jsonify({'erro': "Campos obrigatórios"})
+        # if dados["data_emprestimo"] =="" or ["data_devolucao"] == "":
+        #     return jsonify({'erro': "O campo não pode estar vazio"})
 
         cadastro_emprestimo = Emprestimo(
             id_usuario = int(dados['id_usuario']),
@@ -230,6 +231,8 @@ def realizar_emprestimo():
             data_emprestimo = dados['data_emprestimo'],
             data_devolucao = dados['data_devolucao'],
         )
+        cadastro_emprestimo.save()
+        print('foi cadastrado com sucesso')
         return jsonify({
             'Mensagem': 'Empréstimo realizado com sucesso',
             "id_usuario": cadastro_emprestimo.id_usuario,
@@ -240,8 +243,7 @@ def realizar_emprestimo():
 
     except ValueError:
         return jsonify({
-            'erro':'cadastro de usuário inválida!'
-        })
+            'erro':'cadastro de usuário inválida!'})
 
 @app.route('/consulta_historico_emprestimo', methods=['GET'])
 #protecao
