@@ -1,6 +1,8 @@
 import sqlalchemy
 from flask import Flask, jsonify, request
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
+
 from models import Livro, Usuario, Emprestimo, db_session
 
 app = Flask(__name__)
@@ -90,6 +92,52 @@ def emprestimos():
         lista_emprestimos.append(n.serialize_emprestimo())
     print(lista_emprestimos)
     return jsonify({'lista_emprestimos': lista_emprestimos}), 200
+
+@app.route("/exibir_livro/<id_livro>", methods=['GET'])
+def exibir_livro(id_livro):
+    try:
+        livro = db_session.execute(select(Livro).where(Livro.id_livro == id_livro)).scalar()
+        print("vvv: ",livro)
+        if not livro:
+            return jsonify({'Error': "O livro não foi encontrado", }), 400
+        else:
+            return jsonify({
+                "id_livro": livro.id_livro,
+                "Titulo": livro.titulo,
+                "Autor": livro.autor,
+                "ISBN": livro.ISBN,
+                "Resumo": livro.resumo
+            }),200
+
+    except ValueError:
+        return jsonify({'Error': "Não é possível listar os dados dos livros", }), 400
+    except Exception as e:
+        return jsonify({"Error": str(e)}),400
+    finally:
+        db_session.close()
+
+
+@app.route("/exibir_usuario/<id_usuario>", methods=['GET'])
+def exibir_usuario(id_usuario):
+    try:
+        usuario = db_session.execute(select(Usuario).where(Usuario.id_usuario == id_usuario)).scalar()
+        if not usuario:
+            return jsonify({'Error': "O uruário não foi encontrado", }), 400
+        else:
+            return jsonify({
+                "id_usuario": usuario.id_usuario,
+                "Nome": usuario.nome,
+                "CPF": usuario.CPF,
+                "Endereco": usuario.endereco,
+            }), 200
+
+    except ValueError:
+        return jsonify({'Error': "Não é possível listar os dados dos usuários", }), 400
+    except Exception as e:
+        return jsonify({"Error": str(e)}), 400
+    finally:
+        db_session.close()
+
 
 @app.route('/novo_livro', methods=['POST'])
 #proteção
@@ -544,5 +592,5 @@ def livro_status():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5001)
 
